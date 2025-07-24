@@ -137,7 +137,7 @@ The Employee Portal System is a modern, full-stack web application designed to s
    cd backend
    python manage.py makemigrations
    python manage.py migrate
-   python manage.py createsuperuser  # Optional: create admin user
+   python manage.py createsuperuser 
    ```
 
 6. **Start the development server**
