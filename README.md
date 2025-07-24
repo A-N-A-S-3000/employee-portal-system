@@ -92,16 +92,13 @@ The Employee Portal System is a modern, full-stack web application designed to s
 ## 📸 Screenshots
 
 ### 🏠 Dashboard & Main Interface
-<details>
 
 ![Dashboard Overview](Screenshots/1.png)
 
 ![Employee Management Interface](Screenshots/2.png)
 
-</details>
 
 ### 👥 Employee Management
-<details>
 
 ![Employee List](Screenshots/3.png)
 
@@ -109,10 +106,8 @@ The Employee Portal System is a modern, full-stack web application designed to s
 
 ![Employee Details](Screenshots/5.png)
 
-</details>
 
 ### 🏢 Department & Shift Management
-<details>
 <summary>Click to view department and shift screenshots</summary>
 
 ![Department Management](Screenshots/6.png)
@@ -122,7 +117,6 @@ The Employee Portal System is a modern, full-stack web application designed to s
 </details>
 
 ### 📄 Documents & Leave Management
-<details>
 <summary>Click to view additional features</summary>
 
 ![Document Management](Screenshots/8.png)
@@ -131,7 +125,6 @@ The Employee Portal System is a modern, full-stack web application designed to s
 ![Leave Management](Screenshots/9.png)
 *Leave request and approval interface*
 
-</details>
 
 ### ✨ Key Features Highlighted
 - 🔐 **Secure Authentication**: JWT-based login system
