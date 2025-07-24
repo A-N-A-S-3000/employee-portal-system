@@ -1,0 +1,1113 @@
+
+<!DO  <title>Employee Management System</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Dashboard specific styles */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .header-subtitle {
+      margin: 0.5rem 0 0 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .date-time {
+      text-align: right;
+      opacity: 0.9;
+    }
+
+    .date-time div {
+      margin: 0.25rem 0;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-actions .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .header-actions .btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Statistics Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-card.employees .stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .stat-card.departments .stat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .stat-card.documents .stat-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .stat-card.shifts .stat-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: #7f8c8d;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-change {
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .stat-change.positive { background: #d4edda; color: #155724; }
+    .stat-change.negative { background: #f8d7da; color: #721c24; }
+    .stat-change.warning { background: #fff3cd; color: #856404; }
+    .stat-change.neutral { background: #e2e3e5; color: #383d41; }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+    }
+
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-header h3 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .chart-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    .chart-card.full-width .chart-container {
+      height: 400px;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      margin-bottom: 2rem;
+    }
+
+    .quick-actions h3 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .action-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .action-content h4 {
+      margin: 0 0 0.25rem 0;
+      color: #2c3e50;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .action-content p {
+      margin: 0;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+
+    /* Recent Activity */
+    .recent-activity .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+    }
+
+    .recent-activity .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 1.5rem 0 1.5rem;
+    }
+
+    .recent-activity .card-header h3 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .view-all {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .view-all:hover {
+      text-decoration: underline;
+    }
+
+    .activity-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      color: #2c3e50;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+      color: #7f8c8d;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Management System</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-users"></i> Employee MS</h2>
+    </div>
+    <div class="sidebar-nav">
+      <a href="index.html" class="nav-item active">
+        <i class="fas fa-home"></i> Dashboard
+      </a>
+      <a href="employees/employees.html" class="nav-item">
+        <i class="fas fa-users"></i> Employees
+      </a>
+      <a href="departments/departments.html" class="nav-item">
+        <i class="fas fa-building"></i> Departments
+      </a>
+      <a href="documents/documents.html" class="nav-item">
+        <i class="fas fa-file-alt"></i> Documents
+      </a>
+      <a href="shifts/shifts.html" class="nav-item">
+        <i class="fas fa-clock"></i> Shifts
+      </a>
+      <a href="swap_requests/swap_requests.html" class="nav-item">
+        <i class="fas fa-exchange-alt"></i> Shift Swaps
+      </a>
+      <a href="leave/leave.html" class="nav-item">
+        <i class="fas fa-calendar-times"></i> Leave Requests
+      </a>
+      <a href="calendar/calendar.html" class="nav-item">
+        <i class="fas fa-calendar"></i> Expiry Calendar
+      </a>
+    </div>
+    
+    <!-- Logout Section -->
+    <div class="sidebar-footer">
+      <button class="nav-item logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="header">
+      <div class="d-flex justify-between align-center">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="header-subtitle">Welcome back, <span id="adminName">Administrator</span></p>
+        </div>
+        <div class="header-actions">
+          <button onclick="refreshDashboard()" class="btn btn-light" style="margin-right: 1rem;">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+          <div class="date-time">
+            <div id="currentDate"></div>
+            <div id="currentTime"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="content">
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card employees">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="employeeCount">0</div>
+            <div class="stat-label">Total Employees</div>
+            <div class="stat-change positive" id="employeeChange">+0 this month</div>
+          </div>
+        </div>
+        
+        <div class="stat-card departments">
+          <div class="stat-icon">
+            <i class="fas fa-building"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="departmentCount">0</div>
+            <div class="stat-label">Departments</div>
+            <div class="stat-change neutral" id="departmentChange">Active</div>
+          </div>
+        </div>
+        
+        <div class="stat-card documents">
+          <div class="stat-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="documentCount">0</div>
+            <div class="stat-label">Documents</div>
+            <div class="stat-change warning" id="expiredDocs">0 expiring soon</div>
+          </div>
+        </div>
+        
+        <div class="stat-card shifts">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="shiftCount">0</div>
+            <div class="stat-label">Active Shifts</div>
+            <div class="stat-change positive" id="shiftChange">This week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <!-- Department Distribution Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Department Distribution</h3>
+            <button class="btn btn-sm btn-secondary" onclick="refreshChart('department')">
+              <i class="fas fa-refresh"></i>
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="departmentChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Document Status Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-bar"></i> Document Status</h3>
+            <button class="btn btn-sm btn-secondary" onclick="refreshChart('documents')">
+              <i class="fas fa-refresh"></i>
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="documentChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Monthly Activity Chart -->
+        <div class="chart-card full-width">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-line"></i> Monthly Activity</h3>
+            <div class="chart-controls">
+              <select id="activityPeriod" class="form-control-sm">
+                <option value="6">Last 6 months</option>
+                <option value="12" selected>Last 12 months</option>
+              </select>
+              <button class="btn btn-sm btn-secondary" onclick="refreshChart('activity')">
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="activityChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <div class="action-grid">
+          <a href="employees/employees.html" class="action-card">
+            <div class="action-icon">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="action-content">
+              <h4>Add Employee</h4>
+              <p>Register a new employee</p>
+            </div>
+          </a>
+          
+          <a href="departments/departments.html" class="action-card">
+            <div class="action-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="action-content">
+              <h4>Manage Departments</h4>
+              <p>View and organize departments</p>
+            </div>
+          </a>
+          
+          <a href="documents/documents.html" class="action-card">
+            <div class="action-icon">
+              <i class="fas fa-file-upload"></i>
+            </div>
+            <div class="action-content">
+              <h4>Upload Document</h4>
+              <p>Add employee documents</p>
+            </div>
+          </a>
+          
+          <a href="calendar/calendar.html" class="action-card">
+            <div class="action-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="action-content">
+              <h4>View Calendar</h4>
+              <p>Check document expiry dates</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      // Recent Activity -->
+      <div class="recent-activity">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div class="card-body">
+            <div class="activity-list" id="activityList">
+              <!-- Activity items will be populated by JavaScript -->
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-user-plus text-success"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-text">System initialized successfully</div>
+                  <div class="activity-time">Just now</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Panel (for development) -->
+      <div class="debug-panel" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h4 style="margin: 0; color: #495057;">🔍 API Debug Panel</h4>
+          <button onclick="testAllAPIs()" class="btn btn-sm btn-primary">Test All APIs</button>
+        </div>
+        <div id="debugOutput" style="background: white; padding: 1rem; border-radius: 4px; max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6;">
+          Click "Test All APIs" to check endpoint connectivity...
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Authentication Scripts -->
+  <script src="auth-utils.js"></script>
+  <script src="auth_guard.js"></script>
+  
+  <script>
+    // Dashboard functionality
+    let departmentChart, documentChart, activityChart;
+    
+    // Initialize dashboard when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+      loadDashboardData();
+      initializeCharts();
+    });
+
+    // Update date and time
+    function updateDateTime() {
+      const now = new Date();
+      const dateOptions = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      const timeOptions = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      };
+      
+      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+      document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+    }
+
+    // Load dashboard statistics
+    async function loadDashboardData() {
+      try {
+        console.log('Loading dashboard data...');
+        // Load counts from each module
+        await Promise.all([
+          loadEmployeeStats(),
+          loadDepartmentStats(),
+          loadDocumentStats(),
+          loadShiftStats(),
+          loadRecentActivity()
+        ]);
+        console.log('Dashboard data loaded successfully');
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        // Show user-friendly error message
+        showErrorMessage('Failed to load dashboard data. Please check your connection and try again.');
+      }
+    }
+
+    function showErrorMessage(message) {
+      // Create and show error notification
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #dc3545;
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        max-width: 300px;
+      `;
+      errorDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>${message}</span>
+          <button onclick="this.parentElement.parentElement.remove()" style="margin-left: auto; background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">&times;</button>
+        </div>
+      `;
+      document.body.appendChild(errorDiv);
+      
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        if (errorDiv.parentElement) {
+          errorDiv.remove();
+        }
+      }, 5000);
+    }
+
+    async function loadEmployeeStats() {
+      try {
+        console.log('Loading employee stats from:', `${API_BASE_URL}/employees/list/`);
+        const response = await authAPI.get(`${API_BASE_URL}/employees/list/`);
+        console.log('Employee response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const employees = await response.json();
+        console.log('Employees loaded:', employees.length);
+        document.getElementById('employeeCount').textContent = employees.length;
+        document.getElementById('employeeChange').textContent = `+${Math.floor(employees.length * 0.1)} this month`;
+      } catch (error) {
+        console.error('Error loading employee stats:', error);
+        document.getElementById('employeeCount').textContent = '0';
+      }
+    }
+
+    async function loadDepartmentStats() {
+      try {
+        console.log('Loading department stats from:', `${API_BASE_URL}/departments/list/`);
+        const response = await authAPI.get(`${API_BASE_URL}/departments/list/`);
+        console.log('Department response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const departments = await response.json();
+        console.log('Departments loaded:', departments.length);
+        document.getElementById('departmentCount').textContent = departments.length;
+        document.getElementById('departmentChange').textContent = `${departments.length} Active`;
+      } catch (error) {
+        console.error('Error loading department stats:', error);
+        document.getElementById('departmentCount').textContent = '0';
+      }
+    }
+
+    async function loadDocumentStats() {
+      try {
+        console.log('Loading document stats from:', `${API_BASE_URL}/documents/list/`);
+        const response = await authAPI.get(`${API_BASE_URL}/documents/list/`);
+        console.log('Document response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const documents = await response.json();
+        console.log('Documents loaded:', documents.length);
+        document.getElementById('documentCount').textContent = documents.length;
+        
+        // Check for expiring documents (within 30 days)
+        const expiringSoon = documents.filter(doc => {
+          if (doc.expiry_date) {
+            const expiryDate = new Date(doc.expiry_date);
+            const thirtyDaysFromNow = new Date();
+            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+            return expiryDate <= thirtyDaysFromNow && expiryDate >= new Date();
+          }
+          return false;
+        }).length;
+        
+        document.getElementById('expiredDocs').textContent = `${expiringSoon} expiring soon`;
+      } catch (error) {
+        console.error('Error loading document stats:', error);
+        document.getElementById('documentCount').textContent = '0';
+      }
+    }
+
+    async function loadShiftStats() {
+      try {
+        console.log('Loading shift stats from:', `${API_BASE_URL}/shifts/list/`);
+        const response = await authAPI.get(`${API_BASE_URL}/shifts/list/`);
+        console.log('Shift response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const shifts = await response.json();
+        console.log('Shifts loaded:', shifts.length);
+        
+        // Count active shifts (current week)
+        const now = new Date();
+        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+        const endOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 6));
+        
+        const activeShifts = shifts.filter(shift => {
+          const shiftDate = new Date(shift.date);
+          return shiftDate >= startOfWeek && shiftDate <= endOfWeek;
+        }).length;
+        
+        document.getElementById('shiftCount').textContent = activeShifts;
+        document.getElementById('shiftChange').textContent = 'This week';
+      } catch (error) {
+        console.error('Error loading shift stats:', error);
+        document.getElementById('shiftCount').textContent = '0';
+      }
+    }
+
+    async function loadRecentActivity() {
+      const activityList = document.getElementById('activityList');
+      
+      try {
+        // Simulate recent activity data
+        const activities = [
+          {
+            icon: 'fas fa-user-plus text-success',
+            text: 'System initialized successfully',
+            time: 'Just now'
+          }
+        ];
+
+        // Try to get actual recent data
+        try {
+          const employeesResponse = await authAPI.get(`${API_BASE_URL}/employees/list/`);
+          const employees = await employeesResponse.json();
+          
+          if (employees.length > 0) {
+            const latestEmployee = employees[employees.length - 1];
+            activities.unshift({
+              icon: 'fas fa-user-plus text-success',
+              text: `New employee ${latestEmployee.first_name} ${latestEmployee.last_name} added`,
+              time: '2 hours ago'
+            });
+          }
+        } catch (error) {
+          console.log('Could not load recent employee data');
+        }
+
+        activityList.innerHTML = activities.map(activity => `
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="${activity.icon}"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">${activity.text}</div>
+              <div class="activity-time">${activity.time}</div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('Error loading recent activity:', error);
+      }
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+      initDepartmentChart();
+      initDocumentChart();
+      initActivityChart();
+    }
+
+    async function initDepartmentChart() {
+      try {
+        const response = await authAPI.get(`${API_BASE_URL}/departments/list/`);
+        const departments = await response.json();
+        
+        // Get employee counts per department
+        const employeesResponse = await authAPI.get(`${API_BASE_URL}/employees/list/`);
+        const employees = await employeesResponse.json();
+        
+        const departmentCounts = departments.map(dept => {
+          const count = employees.filter(emp => emp.department === dept.id).length;
+          return { name: dept.name, count };
+        });
+
+        const ctx = document.getElementById('departmentChart').getContext('2d');
+        departmentChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: departmentCounts.map(d => d.name),
+            datasets: [{
+              data: departmentCounts.map(d => d.count),
+              backgroundColor: [
+                '#667eea',
+                '#764ba2',
+                '#f093fb',
+                '#f5576c',
+                '#4facfe',
+                '#00f2fe',
+                '#43e97b',
+                '#38f9d7'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  usePointStyle: true
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing department chart:', error);
+        // Show placeholder chart
+        const ctx = document.getElementById('departmentChart').getContext('2d');
+        departmentChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['No Data'],
+            datasets: [{
+              data: [1],
+              backgroundColor: ['#e9ecef'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      }
+    }
+
+    async function initDocumentChart() {
+      try {
+        const response = await authAPI.get(`${API_BASE_URL}/documents/list/`);
+        const documents = await response.json();
+        
+        // Categorize documents by status
+        const now = new Date();
+        let active = 0, expiring = 0, expired = 0;
+        
+        documents.forEach(doc => {
+          if (doc.expiry_date) {
+            const expiryDate = new Date(doc.expiry_date);
+            const thirtyDaysFromNow = new Date();
+            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+            
+            if (expiryDate < now) {
+              expired++;
+            } else if (expiryDate <= thirtyDaysFromNow) {
+              expiring++;
+            } else {
+              active++;
+            }
+          } else {
+            active++;
+          }
+        });
+
+        const ctx = document.getElementById('documentChart').getContext('2d');
+        documentChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Active', 'Expiring Soon', 'Expired'],
+            datasets: [{
+              data: [active, expiring, expired],
+              backgroundColor: ['#43e97b', '#ffc107', '#dc3545'],
+              borderRadius: 8,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error initializing document chart:', error);
+        // Show placeholder chart
+        const ctx = document.getElementById('documentChart').getContext('2d');
+        documentChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['No Data'],
+            datasets: [{
+              data: [0],
+              backgroundColor: ['#e9ecef']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      }
+    }
+
+    function initActivityChart() {
+      // Generate sample monthly activity data
+      const months = [];
+      const employeeData = [];
+      const documentData = [];
+      
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        months.push(date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }));
+        employeeData.push(Math.floor(Math.random() * 10) + 5);
+        documentData.push(Math.floor(Math.random() * 15) + 8);
+      }
+
+      const ctx = document.getElementById('activityChart').getContext('2d');
+      activityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'New Employees',
+            data: employeeData,
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+            fill: true
+          }, {
+            label: 'Documents Added',
+            data: documentData,
+            borderColor: '#43e97b',
+            backgroundColor: 'rgba(67, 233, 123, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                usePointStyle: true
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 5
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Refresh chart data
+    function refreshChart(chartType) {
+      switch(chartType) {
+        case 'department':
+          if (departmentChart) {
+            departmentChart.destroy();
+          }
+          initDepartmentChart();
+          break;
+        case 'documents':
+          if (documentChart) {
+            documentChart.destroy();
+          }
+          initDocumentChart();
+          break;
+        case 'activity':
+          if (activityChart) {
+            activityChart.destroy();
+          }
+          initActivityChart();
+          break;
+      }
+    }
+
+    // Test API endpoints
+    async function testAllAPIs() {
+      const debugOutput = document.getElementById('debugOutput');
+      debugOutput.innerHTML = '<div style="color: #007bff;">🔄 Testing API endpoints...</div>';
+      
+      const endpoints = [
+        { name: 'Employees', url: `${API_BASE_URL}/employees/list/` },
+        { name: 'Departments', url: `${API_BASE_URL}/departments/list/` },
+        { name: 'Documents', url: `${API_BASE_URL}/documents/list/` },
+        { name: 'Shifts', url: `${API_BASE_URL}/shifts/list/` },
+        { name: 'Leave', url: `${API_BASE_URL}/leaves/list/` },
+        { name: 'Swap Requests', url: `${API_BASE_URL}/swap-requests/list/` }
+      ];
+      
+      let results = [];
+      
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`Testing ${endpoint.name} at ${endpoint.url}`);
+          const response = await authAPI.get(endpoint.url);
+          
+          if (response.ok) {
+            const data = await response.json();
+            results.push(`✅ ${endpoint.name}: ${response.status} - ${Array.isArray(data) ? data.length : 'Unknown'} items`);
+          } else {
+            results.push(`❌ ${endpoint.name}: ${response.status} - ${response.statusText}`);
+          }
+        } catch (error) {
+          results.push(`🔥 ${endpoint.name}: Error - ${error.message}`);
+          console.error(`Error testing ${endpoint.name}:`, error);
+        }
+      }
+      
+      debugOutput.innerHTML = results.map(result => `<div style="margin: 0.25rem 0; color: ${result.startsWith('✅') ? '#28a745' : result.startsWith('❌') ? '#dc3545' : '#fd7e14'};">${result}</div>`).join('');
+    }
+
+    // Add a manual refresh button
+    function refreshDashboard() {
+      console.log('Manually refreshing dashboard...');
+      loadDashboardData();
+      initializeCharts();
+    }
+  </script>
+</body>
+</html>

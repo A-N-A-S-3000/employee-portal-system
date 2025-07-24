@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Employees</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="employees.html">Employees</a>
+  <a href="create.html">Add Employees</a>
+</nav>
+
+<h1>Edit Employees</h1>
+<form id="edit-form">
+<label>Full_Name: </label><input type="text" name="full_name" required><br><br>
+<label>Position: </label><input type="text" name="position" required><br><br>
+<label>Department: </label><select name="department" required></select><br><br>
+<label>GIN: </label><input type="text" name="GIN" placeholder="GID" required><br><br>
+<label>Phone_Number: </label><input type="text" name="phone_number" placeholder="Phone Number" required><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+fetch("http://localhost:8000/employees/detail/" + id + "/")
+  .then(res => res.json())
+  .then(data => {
+        form.elements["full_name"].value = data["full_name"];
+        form.elements["position"].value = data["position"];
+        form.elements["department"].value = data["department"];
+
+  });
+
+    fetch("http://localhost:8000/departments/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="department"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["name"];
+          select.appendChild(option);
+        });
+      });
+
+const form = document.getElementById("edit-form");
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(form).entries());
+  fetch("http://localhost:8000/employees/update/" + id + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).then(res => {
+    if (res.ok) {
+      alert("Updated successfully!");
+      window.location.href = "employees.html";
+    } else {
+      alert("Failed to update.");
+    }
+  });
+});
+</script>
+</body>
+</html>

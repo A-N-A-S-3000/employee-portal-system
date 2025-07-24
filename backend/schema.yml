@@ -1,0 +1,1336 @@
+openapi: 3.0.3
+info:
+  title: employee_management API
+  version: 1.0.0
+  description: API documentation for the employee_management project
+paths:
+  /api/admin/login/:
+    post:
+      operationId: api_admin_login_create
+      description: Custom admin login endpoint that only allows staff/superuser access
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/admin/logout/:
+    post:
+      operationId: api_admin_logout_create
+      description: Logout admin user by blacklisting the refresh token
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/admin/profile/:
+    get:
+      operationId: api_admin_profile_retrieve
+      description: Get current admin user profile
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/token/:
+    post:
+      operationId: api_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/token/refresh/:
+    post:
+      operationId: api_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /departments/:
+    get:
+      operationId: departments_retrieve
+      description: API root for Shift Swaps
+      tags:
+      - departments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /departments/create/:
+    post:
+      operationId: departments_create_create
+      tags:
+      - departments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Department'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Department'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Department'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /departments/delete/{id}/:
+    delete:
+      operationId: departments_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - departments
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /departments/detail/{id}/:
+    get:
+      operationId: departments_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - departments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /departments/list/:
+    get:
+      operationId: departments_list_list
+      tags:
+      - departments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Department'
+          description: ''
+  /departments/update/{id}/:
+    put:
+      operationId: departments_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - departments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Department'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Department'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Department'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    patch:
+      operationId: departments_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - departments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDepartment'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /documents/:
+    get:
+      operationId: documents_retrieve
+      description: API root for Shift Swaps
+      tags:
+      - documents
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /documents/create/:
+    post:
+      operationId: documents_create_create
+      tags:
+      - documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Document'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Document'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /documents/delete/{id}/:
+    delete:
+      operationId: documents_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - documents
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /documents/detail/{id}/:
+    get:
+      operationId: documents_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - documents
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /documents/list/:
+    get:
+      operationId: documents_list_list
+      tags:
+      - documents
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+          description: ''
+  /documents/update/{id}/:
+    put:
+      operationId: documents_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Document'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Document'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+    patch:
+      operationId: documents_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /employees/:
+    get:
+      operationId: employees_retrieve
+      description: API root for Shift Swaps
+      tags:
+      - employees
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /employees/create/:
+    post:
+      operationId: employees_create_create
+      tags:
+      - employees
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Employee'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+  /employees/delete/{id}/:
+    delete:
+      operationId: employees_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - employees
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /employees/detail/{id}/:
+    get:
+      operationId: employees_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - employees
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+  /employees/list/:
+    get:
+      operationId: employees_list_list
+      tags:
+      - employees
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+          description: ''
+  /employees/update/{id}/:
+    put:
+      operationId: employees_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - employees
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Employee'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Employee'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    patch:
+      operationId: employees_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - employees
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployee'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployee'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+  /leaves/:
+    get:
+      operationId: leaves_retrieve
+      tags:
+      - leaves
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /leaves/create/:
+    post:
+      operationId: leaves_create_create
+      tags:
+      - leaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leave'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Leave'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Leave'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+          description: ''
+  /leaves/delete/{id}/:
+    delete:
+      operationId: leaves_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - leaves
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /leaves/detail/{id}/:
+    get:
+      operationId: leaves_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - leaves
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+          description: ''
+  /leaves/list/:
+    get:
+      operationId: leaves_list_list
+      tags:
+      - leaves
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Leave'
+          description: ''
+  /leaves/update/{id}/:
+    put:
+      operationId: leaves_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - leaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leave'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Leave'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Leave'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+          description: ''
+    patch:
+      operationId: leaves_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - leaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeave'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeave'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeave'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leave'
+          description: ''
+  /shifts/:
+    get:
+      operationId: shifts_retrieve
+      description: API root for Shift Swaps
+      tags:
+      - shifts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /shifts/create/:
+    post:
+      operationId: shifts_create_create
+      tags:
+      - shifts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shift'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Shift'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Shift'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shift'
+          description: ''
+  /shifts/delete/{id}/:
+    delete:
+      operationId: shifts_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shifts
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /shifts/detail/{id}/:
+    get:
+      operationId: shifts_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shifts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shift'
+          description: ''
+  /shifts/list/:
+    get:
+      operationId: shifts_list_list
+      tags:
+      - shifts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shift'
+          description: ''
+  /shifts/update/{id}/:
+    put:
+      operationId: shifts_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shifts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shift'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Shift'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Shift'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shift'
+          description: ''
+    patch:
+      operationId: shifts_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shifts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedShift'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedShift'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedShift'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shift'
+          description: ''
+  /swap-requests/:
+    get:
+      operationId: swap_requests_retrieve
+      description: API root for Shift Swaps
+      tags:
+      - swap-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /swap-requests/create/:
+    post:
+      operationId: swap_requests_create_create
+      tags:
+      - swap-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSwap'
+          description: ''
+  /swap-requests/delete/{id}/:
+    delete:
+      operationId: swap_requests_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - swap-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /swap-requests/detail/{id}/:
+    get:
+      operationId: swap_requests_detail_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - swap-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSwap'
+          description: ''
+  /swap-requests/list/:
+    get:
+      operationId: swap_requests_list_list
+      tags:
+      - swap-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShiftSwap'
+          description: ''
+  /swap-requests/update/{id}/:
+    put:
+      operationId: swap_requests_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - swap-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShiftSwap'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSwap'
+          description: ''
+    patch:
+      operationId: swap_requests_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - swap-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedShiftSwap'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedShiftSwap'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedShiftSwap'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSwap'
+          description: ''
+components:
+  schemas:
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - name
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doc_type:
+          type: string
+          maxLength: 100
+        issue_date:
+          type: string
+          format: date
+        expiry_date:
+          type: string
+          format: date
+        alert_before_days:
+          type: integer
+        document_id:
+          type: string
+          nullable: true
+          maxLength: 30
+        document_link:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        employee:
+          type: integer
+      required:
+      - doc_type
+      - employee
+      - expiry_date
+      - id
+      - issue_date
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 100
+        employee_id:
+          type: string
+          readOnly: true
+        position:
+          type: string
+          maxLength: 100
+        GIN:
+          type: string
+          nullable: true
+          maxLength: 20
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 15
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        department:
+          type: integer
+      required:
+      - department
+      - employee_id
+      - full_name
+      - id
+      - position
+    Leave:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        reason:
+          type: string
+          nullable: true
+        employee:
+          type: integer
+      required:
+      - employee
+      - end_date
+      - id
+      - leave_type
+      - start_date
+    LeaveTypeEnum:
+      enum:
+      - sick
+      - annual
+      - emergency
+      - other
+      type: string
+      description: |-
+        * `sick` - Sick Leave
+        * `annual` - Annual Leave
+        * `emergency` - Emergency Leave
+        * `other` - Other
+    PatchedDepartment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+    PatchedDocument:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doc_type:
+          type: string
+          maxLength: 100
+        issue_date:
+          type: string
+          format: date
+        expiry_date:
+          type: string
+          format: date
+        alert_before_days:
+          type: integer
+        document_id:
+          type: string
+          nullable: true
+          maxLength: 30
+        document_link:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        employee:
+          type: integer
+    PatchedEmployee:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 100
+        employee_id:
+          type: string
+          readOnly: true
+        position:
+          type: string
+          maxLength: 100
+        GIN:
+          type: string
+          nullable: true
+          maxLength: 20
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 15
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        department:
+          type: integer
+    PatchedLeave:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        leave_type:
+          $ref: '#/components/schemas/LeaveTypeEnum'
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        reason:
+          type: string
+          nullable: true
+        employee:
+          type: integer
+    PatchedShift:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        location:
+          type: string
+          maxLength: 100
+        employee:
+          type: integer
+        department:
+          type: integer
+    PatchedShiftSwap:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        from_employee:
+          type: integer
+        to_employee:
+          type: integer
+        shift:
+          type: integer
+    Shift:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        location:
+          type: string
+          maxLength: 100
+        employee:
+          type: integer
+        department:
+          type: integer
+      required:
+      - department
+      - employee
+      - end_date
+      - id
+      - location
+      - start_date
+    ShiftSwap:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        from_employee:
+          type: integer
+        to_employee:
+          type: integer
+        shift:
+          type: integer
+      required:
+      - created_at
+      - from_employee
+      - id
+      - reason
+      - shift
+      - to_employee
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

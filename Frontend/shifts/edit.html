@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Shifts</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="shifts.html">Shifts</a>
+  <a href="create.html">Add Shifts</a>
+</nav>
+
+<h1>Edit Shifts</h1>
+<form id="edit-form">
+<label>Employee: </label><select name="employee" required></select><br><br>
+<label>Department: </label><select name="department" required></select><br><br>
+<label>Start_Date: </label><input type="date" name="start_date" required><br><br>
+<label>End_Date: </label><input type="date" name="end_date" required><br><br>
+<label>Location: </label><input type="text" name="location" required><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+fetch("http://localhost:8000/shifts/detail/" + id + "/")
+  .then(res => res.json())
+  .then(data => {
+        form.elements["employee"].value = data["employee"];
+        form.elements["department"].value = data["department"];
+        form.elements["start_date"].value = data["start_date"];
+        form.elements["end_date"].value = data["end_date"];
+        form.elements["location"].value = data["location"];
+
+  });
+
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+    fetch("http://localhost:8000/departments/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="department"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["name"];
+          select.appendChild(option);
+        });
+      });
+
+const form = document.getElementById("edit-form");
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(form).entries());
+  fetch("http://localhost:8000/shifts/update/" + id + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).then(res => {
+    if (res.ok) {
+      alert("Updated successfully!");
+      window.location.href = "shifts.html";
+    } else {
+      alert("Failed to update.");
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Employee leaves</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="../employees/employees.html">Employees</a>
+  <a href="../departments/departments.html">Departments</a>
+  <a href="../documents/documents.html">Documents</a>
+  <a href="../shifts/shifts.html">Shifts</a>
+  <a href="../swap_requests/swap_requests.html">Shift Swaps</a>
+  <a href="leave.html">Leave Requests</a>
+</nav>
+
+  <h1>Employee leaves</h1>
+<form id="form">
+  <select name="employee" required>
+    <option value="">Select Employee</option>
+    <!-- Filled dynamically with JS -->
+  </select><br><br>
+
+  <select name="leave_type" required>
+    <option value="">Select Leave Type</option>
+    <option value="sick">Sick Leave</option>
+    <option value="annual">Annual Leave</option>
+    <option value="emergency">Emergency Leave</option>
+    <option value="other">Other</option>
+  </select><br><br>
+
+  <label>Start Date:</label>
+  <input type="date" name="start_date" required><br><br>
+
+  <label>End Date:</label>
+  <input type="date" name="end_date" required><br><br>
+
+  <textarea name="reason" placeholder="Reason (optional)" rows="4"></textarea><br><br>
+
+  <button type="submit">Create Leave</button>
+</form>
+
+
+<script>
+  // 🟢 Fill the employee dropdown
+  fetch("http://localhost:8000/employees/list/")
+    .then(res => res.json())
+    .then(data => {
+      const select = document.querySelector('select[name="employee"]');
+      data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.full_name;
+        select.appendChild(option);
+      });
+    });
+
+  // 🟢 Handle leave form submission
+  const form = document.getElementById("form");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    fetch("http://localhost:8000/leaves/create/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(res => {
+      alert(res.ok ? "Leave Created!" : "Failed to create leave.");
+      if (res.ok) form.reset();
+    });
+  });
+</script>
+
+</body>
+</html>

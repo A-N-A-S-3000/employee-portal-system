@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Employee Management System</title>
+    <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1>Admin Login</h1>
+                <p>Employee Management System</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required 
+                        autocomplete="username"
+                        placeholder="Enter your username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="password-input">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                        >
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="btn-text">Sign In</span>
+                    <div class="loader" id="loader"></div>
+                </button>
+
+                <div class="error-message" id="errorMessage"></div>
+            </form>
+
+            <div class="login-footer">
+                <p>© 2025 Employee Management System</p>
+                <p class="admin-note">
+                    <i class="fas fa-info-circle"></i>
+                    Admin access only
+                </p>
+            </div>
+        </div>
+
+        <div class="background-animation">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+            <div class="floating-shape shape-4"></div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

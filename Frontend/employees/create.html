@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Employee</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="employees.html">Employees</a>
+  <a href="../departments/departments.html">Departments</a>
+  <a href="../documents/documents.html">Documents</a>
+  <a href="../shifts/shifts.html">Shifts</a>
+  <a href="../swap_requests/swap_requests.html">Shift Swaps</a>
+  <a href="../leave/leave.html">Leave Requests</a>
+</nav>
+
+  <h1>Create Employee</h1>
+  <form id="form">
+    <input type="text" name="full_name" placeholder="Full Name" required><br><br>
+    <input type="text" name="position" placeholder="Position" required><br><br>
+    <input type="text" name="GIN" placeholder="GIN" required><br><br>
+    <select name="department" required><option value="">Select Department</option></select>
+    <input type="number" name="department" disabled placeholder="Department ID" required><br><br>
+    <button type="submit">Create</button>
+  </form>
+
+  <script>
+    
+    fetch("http://localhost:8000/departments/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('select[name="department"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["name"];
+          select.appendChild(option);
+        });
+      });
+
+    const form = document.getElementById("form");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      fetch("http://localhost:8000/employees/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(res => {
+        alert(res.ok ? "Created!" : "Failed.");
+        if(res.ok) form.reset();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Documents</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="documents.html">Documents</a>
+  <a href="create.html">Add Documents</a>
+</nav>
+
+<h1>Edit Documents</h1>
+<form id="edit-form">
+<label>Employee: </label><select name="employee" required></select><br><br>
+<label>Doc_Type: </label><input type="text" name="doc_type" required><br><br>
+<label>document id: </label><input type="text" name="document_id" required><br><br>
+<label>Issue_Date: </label><input type="date" name="issue_date" required><br><br>
+<label>Expiry_Date: </label><input type="date" name="expiry_date" required><br><br>
+<label>Alert_Before_Days: </label><input type="number" name="alert_before_days" required><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+fetch("http://localhost:8000/documents/detail/" + id + "/")
+  .then(res => res.json())
+  .then(data => {
+        form.elements["employee"].value = data["employee"];
+        form.elements["doc_type"].value = data["doc_type"];
+        form.elements["issue_date"].value = data["issue_date"];
+        form.elements["expiry_date"].value = data["expiry_date"];
+        form.elements["document_id"].value = data["document_id"];
+        form.elements["alert_before_days"].value = data["alert_before_days"];
+
+  });
+
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+
+const form = document.getElementById("edit-form");
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(form).entries());
+  fetch("http://localhost:8000/documents/update/" + id + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).then(res => {
+    if (res.ok) {
+      alert("Updated successfully!");
+      window.location.href = "documents.html";
+    } else {
+      alert("Failed to update.");
+    }
+  });
+});
+</script>
+</body>
+</html>

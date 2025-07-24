@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Debug - Employee Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Authentication Debug Console</h1>
+    
+    <div class="debug-section">
+        <h2>Authentication Status</h2>
+        <div id="authStatus" class="status info">Checking authentication...</div>
+        <button onclick="checkAuth()">Check Authentication</button>
+        <button onclick="clearTokens()">Clear Tokens</button>
+        <button onclick="goToLogin()">Go to Login</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Token Information</h2>
+        <div id="tokenInfo"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>API Test</h2>
+        <button onclick="testAPI('departments')">Test Departments API</button>
+        <button onclick="testAPI('employees')">Test Employees API</button>
+        <button onclick="testAPI('documents')">Test Documents API</button>
+        <button onclick="testAPI('shifts')">Test Shifts API</button>
+        <div id="apiResults"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>Console Logs</h2>
+        <div id="consoleOutput">
+            <p><em>Console output will appear here...</em></p>
+        </div>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+
+    <script src="auth-utils.js"></script>
+    <script>
+        // Override console.log to display in the page
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        
+        function addToConsole(message, type = 'log') {
+            const output = document.getElementById('consoleOutput');
+            const div = document.createElement('div');
+            div.style.cssText = `
+                margin: 5px 0;
+                padding: 5px;
+                border-left: 3px solid ${type === 'error' ? '#dc3545' : '#007bff'};
+                background: ${type === 'error' ? '#f8d7da' : '#e7f3ff'};
+                font-family: monospace;
+                font-size: 12px;
+            `;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+
+        // Debug functions
+        function checkAuth() {
+            const authStatus = document.getElementById('authStatus');
+            const tokenInfo = document.getElementById('tokenInfo');
+            
+            const token = getStoredToken();
+            const refreshToken = localStorage.getItem('admin_refresh_token') || sessionStorage.getItem('admin_refresh_token');
+            const userInfo = localStorage.getItem('admin_user_info') || sessionStorage.getItem('admin_user_info');
+            
+            if (token) {
+                authStatus.className = 'status success';
+                authStatus.textContent = '✅ Authentication token found';
+                
+                tokenInfo.innerHTML = `
+                    <h3>Token Details:</h3>
+                    <p><strong>Access Token:</strong> ${token.substring(0, 50)}...</p>
+                    <p><strong>Refresh Token:</strong> ${refreshToken ? refreshToken.substring(0, 30) + '...' : 'Not found'}</p>
+                    <p><strong>User Info:</strong> ${userInfo || 'Not found'}</p>
+                    <p><strong>Storage:</strong> ${localStorage.getItem('admin_access_token') ? 'localStorage' : 'sessionStorage'}</p>
+                `;
+                
+                // Test token validity
+                testTokenValidity();
+            } else {
+                authStatus.className = 'status error';
+                authStatus.textContent = '❌ No authentication token found';
+                tokenInfo.innerHTML = '<p>No authentication data available.</p>';
+            }
+        }
+        
+        async function testTokenValidity() {
+            try {
+                const response = await authenticatedFetch('http://127.0.0.1:8000/api/admin/profile/');
+                const data = await response.json();
+                console.log('Token validation successful:', data);
+                
+                const authStatus = document.getElementById('authStatus');
+                authStatus.textContent += ' and is valid for admin access';
+            } catch (error) {
+                console.error('Token validation failed:', error);
+                
+                const authStatus = document.getElementById('authStatus');
+                authStatus.className = 'status error';
+                authStatus.textContent = '❌ Token found but invalid or expired';
+            }
+        }
+        
+        async function testAPI(endpoint) {
+            const results = document.getElementById('apiResults');
+            results.innerHTML = `<p>Testing ${endpoint} API...</p>`;
+            
+            try {
+                const url = `http://127.0.0.1:8000/${endpoint}/list/`;
+                console.log(`Testing API: ${url}`);
+                
+                const response = await authenticatedFetch(url);
+                const data = await response.json();
+                
+                results.innerHTML = `
+                    <h3>✅ ${endpoint} API Test - Success</h3>
+                    <p><strong>URL:</strong> ${url}</p>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Data Count:</strong> ${Array.isArray(data) ? data.length : 'Not an array'}</p>
+                    <pre>${JSON.stringify(data, null, 2).substring(0, 500)}${JSON.stringify(data, null, 2).length > 500 ? '...' : ''}</pre>
+                `;
+                
+                console.log(`${endpoint} API test successful:`, data);
+            } catch (error) {
+                results.innerHTML = `
+                    <h3>❌ ${endpoint} API Test - Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                console.error(`${endpoint} API test failed:`, error);
+            }
+        }
+        
+        function clearTokens() {
+            localStorage.removeItem('admin_access_token');
+            localStorage.removeItem('admin_refresh_token');
+            sessionStorage.removeItem('admin_access_token');
+            sessionStorage.removeItem('admin_refresh_token');
+            localStorage.removeItem('admin_user_info');
+            sessionStorage.removeItem('admin_user_info');
+            
+            console.log('All tokens cleared');
+            checkAuth();
+        }
+        
+        function goToLogin() {
+            window.location.href = 'auth/login.html';
+        }
+        
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = '<p><em>Console cleared...</em></p>';
+        }
+        
+        // Initial check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Debug page loaded');
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

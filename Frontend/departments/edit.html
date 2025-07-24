@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Departments</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="departments.html">Departments</a>
+  <a href="create.html">Add Departments</a>
+</nav>
+
+<h1>Edit Departments</h1>
+<form id="edit-form">
+<label>Name: </label><input type="text" name="name" required><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+fetch("http://localhost:8000/departments/detail/" + id + "/")
+  .then(res => res.json())
+  .then(data => {
+        form.elements["name"].value = data["name"];
+
+  });
+
+
+const form = document.getElementById("edit-form");
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(form).entries());
+  fetch("http://localhost:8000/departments/update/" + id + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).then(res => {
+    if (res.ok) {
+      alert("Updated successfully!");
+      window.location.href = "departments.html";
+    } else {
+      alert("Failed to update.");
+    }
+  });
+});
+</script>
+</body>
+</html>

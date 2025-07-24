@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Swap_Requests</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="swap_requests.html">Swap_Requests</a>
+  <a href="create.html">Add Swap_Requests</a>
+</nav>
+
+<h1>Edit Swap Requests</h1>
+<form id="edit-form">
+<label>From_Employee: </label><select name="from_employee" required></select><br><br>
+<label>To_Employee: </label><select name="to_employee" required></select><br><br>
+<label>Shift: </label><select name="shift" required></select><br><br>
+<label>Reason: </label><input type="text" name="reason" required><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+
+fetch("http://localhost:8000/swap_requests/detail/" + id + "/")
+  .then(res => res.json())
+  .then(data => {
+        form.elements["from_employee"].value = data["from_employee"];
+        form.elements["to_employee"].value = data["to_employee"];
+        form.elements["shift"].value = data["shift"];
+        form.elements["reason"].value = data["reason"];
+
+  });
+
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="from_employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="to_employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+    fetch("http://localhost:8000/shifts/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('[name="shift"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["id"];
+          select.appendChild(option);
+        });
+      });
+
+const form = document.getElementById("edit-form");
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(form).entries());
+  fetch("http://localhost:8000/swap_requests/update/" + id + "/", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).then(res => {
+    if (res.ok) {
+      alert("Updated successfully!");
+      window.location.href = "swap_requests.html";
+    } else {
+      alert("Failed to update.");
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+### Access admin-only list
+GET http://127.0.0.1:8000/departments/list/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzM3NDY0LCJpYXQiOjE3NTMzMzcxNjQsImp0aSI6IjdmYmZjNjJhZTkwZjRkMDM4OGYyZTQxZjBmMjRkMzJkIiwidXNlcl9pZCI6IjEifQ.wVl_fgx1Fo0qMVtU1ZGu6DZT8MLO3MFtESLsYwAIqkg
+
+
+
+

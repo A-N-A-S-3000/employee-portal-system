@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Shift Swap</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+<nav>
+  <a href="../index.html">Home</a>
+  <a href="../employees/employees.html">Employees</a>
+  <a href="../departments/departments.html">Departments</a>
+  <a href="../documents/documents.html">Documents</a>
+  <a href="../shifts/shifts.html">Shifts</a>
+  <a href="swap_requests.html">Shift Swaps</a>
+  <a href="../leave/leave.html">Leave Requests</a>
+</nav>
+
+  <h1>Create Shift Swap</h1>
+  <form id="form">
+    <select name="from_employee" required><option value="">Select From Employee</option></select>
+    <input type="number" name="from_employee" disabled placeholder="From Employee ID" required><br><br>
+    <select name="to_employee" required><option value="">Select To Employee</option></select>
+    <input type="number" name="to_employee" disabled placeholder="To Employee ID" required><br><br>
+    <select name="shift" required><option value="">Select Shift</option></select>
+    <input type="number" name="shift" disabled placeholder="Shift ID" required><br><br>
+    <input type="text" name="reason" placeholder="Reason" required><br><br>
+    <button type="submit">Create</button>
+  </form>
+
+  <script>
+    
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('select[name="from_employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+
+    
+    fetch("http://localhost:8000/employees/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('select[name="to_employee"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["full_name"];
+          select.appendChild(option);
+        });
+      });
+
+    
+    fetch("http://localhost:8000/shifts/list/")
+      .then(res => res.json())
+      .then(data => {
+        const select = document.querySelector('select[name="shift"]');
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = item["id"];
+          select.appendChild(option);
+        });
+      });
+
+    const form = document.getElementById("form");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      fetch("http://localhost:8000/swap-requests/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(res => {
+        alert(res.ok ? "Created!" : "Failed.");
+        if(res.ok) form.reset();
+      });
+    });
+  </script>
+</body>
+</html>
