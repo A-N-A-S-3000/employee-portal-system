@@ -93,28 +93,21 @@ The Employee Portal System is a modern, full-stack web application designed to s
 
 ### 🏠 Dashboard & Main Interface
 <details>
-<summary>Click to view dashboard screenshots</summary>
 
 ![Dashboard Overview](Screenshots/1.png)
-*Main dashboard with navigation and overview*
 
 ![Employee Management Interface](Screenshots/2.png)
-*Employee management interface with search and filters*
 
 </details>
 
 ### 👥 Employee Management
 <details>
-<summary>Click to view employee management screenshots</summary>
 
 ![Employee List](Screenshots/3.png)
-*Employee listing with comprehensive details*
 
 ![Add New Employee](Screenshots/4.png)
-*Employee creation form with all required fields*
 
 ![Employee Details](Screenshots/5.png)
-*Detailed employee profile view*
 
 </details>
 
@@ -123,10 +116,8 @@ The Employee Portal System is a modern, full-stack web application designed to s
 <summary>Click to view department and shift screenshots</summary>
 
 ![Department Management](Screenshots/6.png)
-*Department management interface*
 
 ![Shift Management](Screenshots/7.png)
-*Shift scheduling and management system*
 
 </details>
 
